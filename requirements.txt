@@ -1,0 +1,22 @@
+# Core Dependencies
+pydantic
+pydantic-settings
+python-dotenv
+
+# HTTP Client
+aiohttp
+beautifulsoup4
+trafilatura
+
+# LLM
+openai
+
+# Notion
+notion-client
+
+# Notification
+python-telegram-bot
+
+# Testing
+pytest
+flake8

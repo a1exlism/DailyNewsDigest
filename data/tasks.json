@@ -1,0 +1,82 @@
+{
+  "tasks": [
+    {
+      "id": "621050ea-d1bc-49b9-b71a-304f80e4ad43",
+      "name": "分析并修复LLM响应格式错误",
+      "description": "检查 `data_processing/llm_summarizer.py`，确定LLM返回类型，并增加健壮的错误处理，确保在缺少 `choices` 属性时程序能正常运行。考虑记录完整的LLM响应以帮助调试。",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-09-06T14:51:55.816Z",
+      "updatedAt": "2025-09-06T14:57:57.700Z",
+      "relatedFiles": [
+        {
+          "path": "data_processing/llm_summarizer.py",
+          "type": "TO_MODIFY",
+          "description": "LLM摘要器，需要修改以处理LLM响应格式错误"
+        }
+      ],
+      "implementationGuide": "1. 定位 `data_processing/llm_summarizer.py` 中的LLM API调用部分。2. 分析LLM返回结果的结构，尤其是在错误发生时。3. 在访问 `choices` 属性之前，添加条件检查或 `try-except` 块来验证返回对象的结构。4. 如果返回的是错误字符串，考虑将其作为失败案例处理，并可能记录原始字符串以供分析。5. 确保代码不会因LLM返回非预期格式而崩溃。",
+      "verificationCriteria": "运行程序，确保不再出现 `'str' object has no attribute 'choices'` 错误，并且LLM摘要功能能够处理非标准响应或错误响应而不会崩溃。",
+      "summary": "已成功修复LLM摘要器在接收到非预期字符串响应时崩溃的问题。现在程序能够捕获并记录完整的非预期响应，增加了程序的健壮性，尽管LLM仍返回HTML页面，但已不再崩溃。",
+      "completedAt": "2025-09-06T14:57:57.696Z"
+    },
+    {
+      "id": "e0438cc4-009a-45a4-8590-4115ee976ae9",
+      "name": "优雅处理HTTP 403 Forbidden错误",
+      "description": "检查 `utils/http_client.py` 和 `main.py` 中关于HTTP请求错误处理的部分，确保程序在遇到403 Forbidden等权限错误时能够跳过当前文章并继续处理其他内容，而不是中断整个流程。",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-09-06T14:51:55.816Z",
+      "updatedAt": "2025-09-06T14:51:55.816Z",
+      "relatedFiles": [
+        {
+          "path": "utils/http_client.py",
+          "type": "REFERENCE",
+          "description": "HTTP客户端，需要了解其错误处理机制"
+        },
+        {
+          "path": "main.py",
+          "type": "TO_MODIFY",
+          "description": "主程序入口，可能需要调整错误处理逻辑以跳过受限内容"
+        }
+      ],
+      "implementationGuide": "1. 确认 `utils/http_client.py` 中对HTTP错误的捕获和传递机制。2. 在 `main.py` 或 `data_acquisition` 层，对于 `403 Forbidden` 这样的错误，增加明确的跳过逻辑。3. 确认已有的 `WARNING` 日志记录足以说明问题，无需额外处理，因为这是外部网站的访问限制，无法通过代码解决。",
+      "verificationCriteria": "运行程序，确保在遇到 `403 Forbidden` 错误时，程序能够继续处理后续文章，并且日志中记录了相应的警告信息。"
+    },
+    {
+      "id": "bd6dc872-8a44-45af-b8b1-01490da7bc70",
+      "name": "添加代理配置模块",
+      "description": "创建一个新的模块（例如 `utils/proxy_manager.py`），用于集中管理和配置 HTTP、HTTPS 和 SOCKS 代理。该模块应提供设置全局代理或在 HTTP 客户端中集成代理的方法。",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-09-06T15:06:25.323Z",
+      "updatedAt": "2025-09-06T15:35:50.092Z",
+      "relatedFiles": [
+        {
+          "path": "utils/proxy_manager.py",
+          "type": "CREATE",
+          "description": "新的代理管理模块"
+        },
+        {
+          "path": "utils/http_client.py",
+          "type": "TO_MODIFY",
+          "description": "HTTP客户端，需要集成代理功能"
+        },
+        {
+          "path": "config/settings.py",
+          "type": "TO_MODIFY",
+          "description": "可能需要添加代理相关的配置读取"
+        },
+        {
+          "path": ".env.template",
+          "type": "TO_MODIFY",
+          "description": "添加代理配置模板"
+        }
+      ],
+      "implementationGuide": "1. 在 `utils/` 目录下创建 `proxy_manager.py` 文件。2. 实现一个类或函数，用于从配置文件（如 `.env`）读取代理设置。3. 提供一个方法，可以返回一个配置好的 `httpx.AsyncClient` 实例（如果 `httpx` 是主要的 HTTP 客户端），或者提供设置 `os.environ` 代理变量的逻辑。4. 确保支持 `http`, `https` 和 `socks` 代理类型。5. 在 `utils/http_client.py` 中集成代理管理器。",
+      "verificationCriteria": "成功配置代理后，程序能够通过指定的代理进行网络请求，并且没有出现代理相关的连接错误。",
+      "summary": "已成功添加代理配置模块。程序现在能够从环境变量或配置文件中读取代理设置，并将其应用于 aiohttp.ClientSession。日志已显示代理被成功识别和使用。",
+      "completedAt": "2025-09-06T15:35:50.091Z"
+    }
+  ]
+}
